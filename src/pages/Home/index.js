@@ -4,7 +4,7 @@ import Sidebar from '../../components/Sidebar';
 import { RoomsProvider } from '../../context/room.context';
 import Chat from './Chat';
 import { useMediaQuery } from '../../misc/custom-hooks';
-import { useRouteMatch } from 'react-router-dom/cjs/react-router-dom.min';
+import { useRouteMatch } from 'react-router';
 
 const Home = () => {
   const isDeskTop = useMediaQuery('(min-width: 992px)');
