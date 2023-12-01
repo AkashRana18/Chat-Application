@@ -1,19 +1,21 @@
 import TimeAgo from 'timeago-react';
 import ProfileAvatar from '../../dashboard/ProfileAvatar';
 import ProfileInfoBtnModal from './ProfileInfoBtnModal';
+import PresenceDot from '../../PresenceDot';
+
 const MessageItem = ({ messages }) => {
   const { author, createdAt, text } = messages;
   return (
     <li className="padded mb-1">
       <div className="d-flex align-items-center font-bolder mb-1">
-        <ProfileAvatar
-          src={author.avatar}
-          name={author.name}
-          className="ml-1"
-          size="xs"
-        />
+        <PresenceDot uid={author.uid} />
+        <ProfileAvatar src={author.avatar} className="ml-1" size="xs" />
         <span className="ml-2">{author.name}</span>
-        <ProfileInfoBtnModal profile = {author}  appearance = "link" className = "p-0 ml-1 text-black" />
+        <ProfileInfoBtnModal
+          profile={author}
+          appearance="link"
+          className="p-0 ml-1 text-black"
+        />
         <TimeAgo
           className="font-normal text-black-45 ml-2"
           datetime={createdAt}

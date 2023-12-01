@@ -5,15 +5,17 @@ import ProfileAvatar from '../../dashboard/ProfileAvatar';
 const ProfileInfoBtnModal = ({ profile, ...btnProps }) => {
   const { isOpen, close, open } = useModelState();
 
-  const { name, avatar, createAt } = profile;
+  const { name, avatar, createdAt } = profile;
 
   const shortName = profile.name.split(' ')[0];
 
-  const memberSince = new Date(createAt).toLocaleDateString();
+  const memberSince = new Date(createdAt).toLocaleDateString();
 
   return (
     <>
-      <Button {...btnProps}  onClick={open}  >{shortName}</Button>
+      <Button {...btnProps} onClick={open}>
+        {shortName}
+      </Button>
       <Modal show={isOpen} onHide={close}>
         <Modal.Header>
           <Modal.Title>{shortName} profile</Modal.Title>

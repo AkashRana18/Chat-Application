@@ -33,7 +33,7 @@
       ".write": "auth !== null",
 
       "$user_id": {
-        ".read": "$user_id === auth.uid",
+        ".read": "$user_id === null",
         ".write": "$user_id === auth.uid"
       }
     },
