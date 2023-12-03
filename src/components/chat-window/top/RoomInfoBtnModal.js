@@ -5,8 +5,8 @@ import { memo } from 'react';
 
 const RoomInfoBtnModal = () => {
   const { isOpen, close, open } = useModelState();
-  const description = useCurrentRoom(v => v.description);
-  const name = useCurrentRoom(v => v.name);
+  const description = useCurrentRoom(v => v && v.description);
+  const name = useCurrentRoom(v =>  v && v.name);
 
   return (
     <>

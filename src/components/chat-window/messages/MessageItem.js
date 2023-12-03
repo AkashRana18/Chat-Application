@@ -10,9 +10,10 @@ const MessageItem = ({ messages }) => {
       <div className="d-flex align-items-center font-bolder mb-1">
         <PresenceDot uid={author.uid} />
         <ProfileAvatar src={author.avatar} className="ml-1" size="xs" />
-        <span className="ml-2">{author.name}</span>
+
         <ProfileInfoBtnModal
           profile={author}
+          // name={author.name}
           appearance="link"
           className="p-0 ml-1 text-black"
         />

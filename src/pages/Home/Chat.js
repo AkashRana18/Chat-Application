@@ -20,7 +20,7 @@ const Chat = () => {
 
   const { name, description } = currentRoom;
 
-  const currentRoomData = () => {
+  const {currentRoomData} = () => {
     return {
       name,
       description,
