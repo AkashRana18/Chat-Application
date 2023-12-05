@@ -11,8 +11,8 @@ const EditRoomBtnDrawer = () => {
   const { chatId } = useParams();
   const isMobile = useMediaQuery('(max-width: 992px)');
 
-  const name = useCurrentRoom(v => v && v.name);
-  const description = useCurrentRoom(v => v && v.description);
+  const name = useCurrentRoom(v => v.name);
+  const description = useCurrentRoom(v => v.description);
 
   const updateData = (key, value) => {
     database
@@ -58,7 +58,7 @@ const EditRoomBtnDrawer = () => {
             initialValue={description}
             onSave={onDescriptionSave}
             emptyMsg="Description cannot be empty"
-            wrapperclassName="mt-3"
+            wrapperClassName="mt-3"
           />
         </Drawer.Body>
         <Drawer.Footer>

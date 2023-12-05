@@ -12,7 +12,7 @@ import {
 import { useModelState } from '../misc/custom-hooks';
 import { useCallback, useRef, useState } from 'react';
 import firebase from 'firebase/app';
-import { database } from '../misc/firebase';
+import { auth, database } from '../misc/firebase';
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -44,7 +44,11 @@ const CreateRoomBtnModal = () => {
     const newRoomData = {
       ...formValue,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
+      admins: {
+        [auth.currentUser.uid]: true,
+      },
     };
+
     try {
       await database.ref('rooms').push(newRoomData);
       Alert.info(`${formValue.name} has been created`, 4000);
@@ -92,7 +96,12 @@ const CreateRoomBtnModal = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button block appearance="primary" onClick={onSubmit} disabled = {isLoading} >
+          <Button
+            block
+            appearance="primary"
+            onClick={onSubmit}
+            disabled={isLoading}
+          >
             Create new chat room
           </Button>
         </Modal.Footer>

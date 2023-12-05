@@ -53,9 +53,7 @@ export const ProfileProvider = ({ children }) => {
             .then(() => {
               userStatusRef.set(isOnlineForDatabase);
             });
-      
         });
-
       } else {
         if (userRef) {
           userRef.off();
@@ -71,12 +69,10 @@ export const ProfileProvider = ({ children }) => {
       }
     });
 
-
     return () => {
       authUnsub();
 
       database.ref('.info/connected').off();
-
 
       if (userRef) {
         userRef.off();
@@ -88,12 +84,10 @@ export const ProfileProvider = ({ children }) => {
     };
   }, []);
 
-
   return (
     <ProfileContext.Provider value={{ isLoading, profile }}>
       {children}
     </ProfileContext.Provider>
-
   );
 };
 
