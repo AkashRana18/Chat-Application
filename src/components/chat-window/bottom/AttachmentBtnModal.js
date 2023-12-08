@@ -46,10 +46,9 @@ const AttachmentBtnModal = ({ afterUpload }) => {
       await afterUpload(files);
       setIsLoading(false);
 
-        close();
-      
+      close();
     } catch (err) {
-        setIsLoading(false);
+      setIsLoading(false);
       Alert.error(err.message, 4000);
     }
   };
