@@ -23,7 +23,7 @@ const AttachmentBtnModal = ({ afterUpload }) => {
   const onUpload = async () => {
     try {
       const uploadPromises = fileList.map(f => {
-        storage
+        return storage
           .ref(`/chat/${chatId}`)
           .child(Date.now() + f.name)
           .put(f.blobFile, {
