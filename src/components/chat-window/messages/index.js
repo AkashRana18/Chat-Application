@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'rsuite';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { transformToArrWithId } from '../../../misc/helpers';
+import { groupBy, transformToArrWithId } from '../../../misc/helpers';
 import { auth, database, storage } from '../../../misc/firebase';
 import MessageItem from './MessageItem';
-
 const Messages = () => {
   const { chatId } = useParams();
   const [messages, setMessages] = useState(null);
@@ -114,7 +113,7 @@ const Messages = () => {
 
       if (file) {
         try {
-          const fileRef =  storage.refFromURL(file.url);
+          const fileRef = storage.refFromURL(file.url);
           await fileRef.delete();
         } catch (err) {
           Alert.error(err.message);
@@ -124,19 +123,34 @@ const Messages = () => {
     [chatId, messages]
   );
 
+  const renderMessages = (messages, handleAdmin, handleLike, handleDelete) => {
+    const groups = groupBy(messages, item =>
+      new Date(item.createdAt).toDateString()
+    );
+
+    const items = [];
+
+    Object.keys(groups).forEach(date => {
+      items.push(<li className="text-center mb-1 padded">{date}</li>);
+      const msgs = groups[date].map(msg => (
+        <MessageItem
+          key={msg.id}
+          messages={msg}
+          handleAdmin={handleAdmin}
+          handleLike={handleLike}
+          handleDelete={handleDelete}
+        />
+      ));
+      items.push(...msgs);
+    });
+    return items;
+  };
+
   return (
     <ul className="msg-list custom-scroll ">
       {isChatEmpty && <li>No messages yet</li>}
       {canShowMessages &&
-        messages.map(msg => (
-          <MessageItem
-            key={msg.id}
-            messages={msg}
-            handleAdmin={handleAdmin}
-            handleLike={handleLike}
-            handleDelete={handleDelete}
-          />
-        ))}
+        renderMessages(messages, handleAdmin, handleLike, handleDelete)}
     </ul>
   );
 };

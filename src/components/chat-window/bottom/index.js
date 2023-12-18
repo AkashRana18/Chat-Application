@@ -46,7 +46,8 @@ const Bottom = () => {
       const updates = {};
 
       files.forEach(file => {
-        const msgData = assembleMessage(profile, chatId);
+        const msgData = assembleMessage(profile, window.chatId);
+
         msgData.file = file;
 
         const messageId = firebase.database().ref('messages').push().key;
@@ -56,7 +57,7 @@ const Bottom = () => {
 
       const lastMsgId = Object.keys(updates).pop();
 
-      updates[`/rooms/${chatId}/lastMessage`] = {
+      updates[`/rooms/${window.chatId}/lastMessage`] = {
         ...updates[lastMsgId],
         msgId: lastMsgId,
       };
@@ -69,7 +70,7 @@ const Bottom = () => {
         Alert.error(err.message, 4000);
       }
     },
-    [chatId, profile]
+    [profile]
   );
 
   const onSendClick = async () => {

@@ -7,15 +7,22 @@ import { useRooms } from '../../context/room.context';
 import { CurrentRoomProvider } from '../../context/current-room.context';
 import { transformToArr } from '../../misc/helpers';
 import { auth } from '../../misc/firebase';
+import { useEffect } from 'react';
 
 const Chat = () => {
   const { chatId } = useParams();
   const rooms = useRooms();
+
+  useEffect(() => {
+    window.chatId = chatId;
+  }, [chatId]);
+
   if (!rooms) {
     return <Loader center vertical size="md" content="Loading" speed="slow" />;
   }
 
   const currentRoom = rooms.find(room => room.id === chatId);
+
   if (!currentRoom) {
     return <h6 className="text-center mt-page">Chat {chatId} not found </h6>;
   }

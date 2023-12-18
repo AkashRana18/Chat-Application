@@ -2,10 +2,9 @@ import { Alert, Icon, InputGroup } from 'rsuite';
 import { ReactMic } from 'react-mic';
 import { useState, useCallback } from 'react';
 import { storage } from '../../../misc/firebase';
-import { useParams } from 'react-router-dom';
 
 const AudioMsgBtn = ({ afterUpload }) => {
-  const { chatId } = useParams();
+  const { chatId } = window;
 
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -46,7 +45,6 @@ const AudioMsgBtn = ({ afterUpload }) => {
       onClick={onClick}
       disabled={isUploading}
       className={isRecording ? 'animate-blink' : ''}
-      
     >
       <Icon icon="microphone" />
       <ReactMic
