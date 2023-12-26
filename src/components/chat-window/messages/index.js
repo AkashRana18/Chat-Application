@@ -4,28 +4,63 @@ import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { groupBy, transformToArrWithId } from '../../../misc/helpers';
 import { auth, database, storage } from '../../../misc/firebase';
 import MessageItem from './MessageItem';
+import { Button } from 'rsuite';
+import { useRef } from 'react';
+
+const PAGE_SIZE = 15;
+const messagesRef = database.ref('/messages');
+
 const Messages = () => {
   const { chatId } = useParams();
   const [messages, setMessages] = useState(null);
+  const [limit, setLimit] = useState(PAGE_SIZE);
+  const selfRef = useRef();
 
   const isChatEmpty = messages && messages.length === 0;
   const canShowMessages = messages && messages.length > 0;
 
-  useEffect(() => {
-    const messagesRef = database.ref('/messages');
+  const loadMessages = useCallback(
+    limitToLast => {
+      messagesRef.off();
 
-    messagesRef
-      .orderByChild('roomId')
-      .equalTo(chatId)
-      .on('value', snap => {
-        const data = transformToArrWithId(snap.val());
-        setMessages(data);
-      });
+      messagesRef
+        .orderByChild('roomId')
+        .equalTo(chatId)
+        .limitToLast(limitToLast || PAGE_SIZE)
+        .on('value', snap => {
+          const data = transformToArrWithId(snap.val());
+          setMessages(data);
+        });
+
+      setLimit(p => p + PAGE_SIZE);
+    },
+    [chatId]
+  );
+
+  const onLoadMore = useCallback(() => {
+    const node = selfRef.current;
+    const oldHeight = node.scrollHeight;
+
+    loadMessages(limit);
+
+    setTimeout(() => {
+      const newHeight = node.scrollHeight;
+      node.scrollTop = newHeight - oldHeight;
+    }, 500);
+  }, [loadMessages, limit]);
+
+  useEffect(() => {
+    const node = selfRef.current;
+
+    loadMessages();
+    setTimeout(() => {
+      node.scrollTop = node.scrollHeight;
+    }, 500);
 
     return () => {
       messagesRef.off('value');
     };
-  }, [chatId]);
+  }, [loadMessages]);
 
   const handleAdmin = useCallback(
     async uid => {
@@ -99,16 +134,17 @@ const Messages = () => {
           ...messages[messages.length - 2],
           msgId: messages[messages.length - 2].id,
         };
-        if (isLast && messages.length === 1) {
-          updates[`/rooms/${chatId}/lastMessage`] = null;
-        }
+      }
 
-        try {
-          await database.ref().update(updates);
-          Alert.info('Message has been deleted');
-        } catch (err) {
-          return Alert.error(err.message);
-        }
+      if (isLast && messages.length === 1) {
+        updates[`/rooms/${chatId}/lastMessage`] = null;
+      }
+
+      try {
+        await database.ref().update(updates);
+        Alert.info('Message has been deleted');
+      } catch (err) {
+        return Alert.error(err.message);
       }
 
       if (file) {
@@ -131,7 +167,7 @@ const Messages = () => {
     const items = [];
 
     Object.keys(groups).forEach(date => {
-      items.push(<li className="text-center mb-1 padded">{date}</li>);
+      items.push(<li key={date} className="text-center mb-1 padded">{date}</li>);
       const msgs = groups[date].map(msg => (
         <MessageItem
           key={msg.id}
@@ -147,7 +183,19 @@ const Messages = () => {
   };
 
   return (
-    <ul className="msg-list custom-scroll ">
+    <ul ref={selfRef} className="msg-list custom-scroll ">
+      {messages && messages.length >= PAGE_SIZE && (
+        <li className="text-center mt-2 mb-2">
+          <Button
+            className="btn btn-control btn-dark-green"
+            onClick={onLoadMore}
+            color="green"
+          >
+            Load More
+          </Button>
+        </li>
+      )}
+
       {isChatEmpty && <li>No messages yet</li>}
       {canShowMessages &&
         renderMessages(messages, handleAdmin, handleLike, handleDelete)}
